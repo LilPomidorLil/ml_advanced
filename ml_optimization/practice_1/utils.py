@@ -1,6 +1,8 @@
-import numpy as np
+from collections import defaultdict
+from typing import List
 
-from scipy.optimize import line_search  # сильные условия Вульфв
+import numpy as np
+from scipy.optimize import line_search  # сильные условия Вульфа
 
 class LineSearchTool(object):
     """
@@ -69,8 +71,6 @@ class LineSearchTool(object):
         alpha : float or None if failure
             Chosen step size
         """
-        # TODO: Implement line search procedures for Armijo, Wolfe and Constant steps.
-
         if self._method == 'Constant':
             return self.c
 
@@ -85,13 +85,7 @@ class LineSearchTool(object):
             return alpha_0
 
         elif self._method == 'Wolfe':
-            # phi_0 = oracle.func(x_k)
-            # phi_der_0 = oracle.grad_directional(x_k, d_k, 0)
-
-            phi_der = lambda alpha: oracle.grad_directional(x_k, d_k, alpha)
-            phi = lambda alpha: oracle.func_directional(x_k, d_k, alpha)
-
-            alpha_wolfe, _, _, _, _, _ = line_search(phi, phi_der, x_k, d_k, self.c1, self.c2)
+            alpha_wolfe, _, _, _, _, _ = line_search(oracle.func, oracle.grad, x_k, d_k, c1 = self.c1, c2 = self.c2)
 
             # Если ряд сошелся, то возвращаем альфу ->
             if alpha_wolfe:
@@ -106,6 +100,7 @@ class LineSearchTool(object):
                 alpha_0 /= 2
 
             return alpha_0
+
         return None
 
 
@@ -117,3 +112,11 @@ def get_line_search_tool(line_search_options=None):
             return LineSearchTool.from_dict(line_search_options)
     else:
         return LineSearchTool()
+
+def _update_history(history: defaultdict, time: float, func: np.ndarray, grad: np.ndarray, x: np.ndarray):
+    if x.shape[0] <= 2:
+        history['x'].append(x)
+
+    history['time'].append(time)
+    history['func'].append(func)
+    history['grad_norm'].append(np.linalg.norm(grad))
