@@ -1,0 +1,193 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Lachaise Assignment
+% LaTeX Template
+% Version 1.0 (26/6/2018)
+%
+% This template originates from:
+% http://www.LaTeXTemplates.com
+%
+% Authors:
+% Marion Lachaise & François Févotte
+% Vel (vel@LaTeXTemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+
+\input{structure.tex} % Include the file specifying the document structure and custom commands
+
+%----------------------------------------------------------------------------------------
+%	ASSIGNMENT INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{Методы оптимизации в машинном обучении \\ Практическое задание \#1} % Title of the assignment
+
+\author{Рожин Андрей} % Author name
+
+\date{НИУ ВШЭ --- \today} % University, school and/or department name(s) and a date
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+	
+	\maketitle % Print the title
+	
+	%----------------------------------------------------------------------------------------
+	%	INTRODUCTION
+	%----------------------------------------------------------------------------------------
+	
+	\section*{Вступление} % Unnumbered section
+	Решение задач оптимизации, является неотъемлемой частью машинного обучения. В этом документе обсуждаются базовые подходы к решению задач этого типа, а также проведение и анализ экспериментов и аналитический вывод формулы логистической регрессии в матричном виде.
+	
+	% Math equation/formula
+	\begin{equation}
+		L(w) = - \frac{1}{m} \sum\limits_{i=1}^m \biggl[y_i log\biggl(\frac{1}{1 + e^{-w^Tx_i}}\biggr) + (1 - y_i) log\biggl(1 - \frac{1}{1 + e^{-w^Tx_i}}\biggr)\biggr] + \frac{\lambda}{2} \|w\|^2
+	\end{equation}
+	
+	Рекомендуется ознакомиться с выкладкой ниже.
+	
+	\begin{info} % Information block
+		\\
+		Документ оформлен согласно  \href{https://clck.ru/h2bZh}{этому заданию}.\\ 
+		Краткое содержание задания: \\
+		1. Алгоритм cпуска.
+		
+		1.1 Общая концепция
+		
+		1.2 Критерий остановки
+		
+		1.3 Линейный поиск - условие \textit{Армихо}, сильное условие \textit{Вульфа}.
+		
+		1.4 Градиентный спуск.
+		
+		1.5 Метод Ньютона
+		
+		1.6 Оптимизация вычислений \\
+		2. Модели
+		
+		2.1 Двухклассовая логистическая регрессия.
+		
+		2.2. Разностная проверка градиента и гессиана \\
+		3. Эксперименты.
+		
+		3.1 Оценка реализованных алгоритмов.		
+	\end{info}
+	
+	%----------------------------------------------------------------------------------------
+	%	PROBLEM 1
+	%----------------------------------------------------------------------------------------
+	
+	\section{Двухклассовая логистическая регрессия} % Numbered section
+	
+	\begin{minipage}{0.5\textwidth}
+		Прежде чем начать работу, следует ввести некоторые обозначения, которые будут использоваться в дальнейшем. Все они должны быть привычными, используемыми постоянно в теоретических выкладках.
+	\end{minipage}
+	\begin{minipage}{0.5\textwidth}
+		\begin{flushright}
+			$w$ - вектор весов объекта \\
+			$x$ - матрица значений признаков объектов \\
+			$y$ - истинная целевая переменная \\
+			$m$ - кол-во объектов \\
+			$L(w)$ - функционал ошибки
+		\end{flushright}
+	\end{minipage}
+	
+	%------------------------------------------------
+	
+	\subsection{Градиент}
+	
+	Так как мы решаем задачу бинарной классификации, то множество значений, которые принимает целевая переменная $y$ состоит из 2 цифр --- \{1, 0\}. Это очень важный элемент, которые мы будем использовать в дальнейшем, поэтому стоит его запомнить. В формуле (1) заметим сигмоидную функцию, которая дает вероятность класса. Введем функцию.
+	
+	\newpage
+	\begin{equation}
+		g(z) = \frac{1}{z + e^{-z}} 
+	\end{equation}
+
+	\begin{equation*}
+		h_w(x) = g(w^Tx) = \frac{1}{z + e^{-z}}
+	\end{equation*}
+	
+	\begin{center}
+		Функция (2) обладает следующими свойствами, которые нетрудно доказать.
+	\end{center}
+	
+	
+	\begin{equation*}
+		g\prime(z) = g(z)(1 - g(z))
+	\end{equation*}
+	
+	\vspace{-0.5cm}
+	\begin{equation*}
+		g(-z) = 1 - g(z)
+	\end{equation*}
+
+	\begin{center}
+		Перепишем функцию (1), используя новые обозначения
+	\end{center}
+
+	\begin{equation}
+		L(w) = \frac{1}{m} \sum\limits_{i=1}^m \biggl[y_i log(g(w^Tx)) + (1 - y_i) log(1 - g(w^Tx))\biggr] + \frac{\lambda}{2} \|w\|^2
+	\end{equation}
+	
+	Используя эти обозначения и свойства сигмоидной функции, приступим к нахождению производной. Предположим, что у нас есть только один объект с вектором признаков $x_i$ и одно значение целевой переменной $y_i$. Продифференцируем функцию (3) по $j$-тому значению вектора весов $w$. Дифференцировать будем без члена регуляризации, допишем его позднее.
+	
+	\begin{equation*}
+		\frac{\partial}{\partial w_j} L(w) = - \biggl[\frac{y_i}{g(w^Tx)} - (1 - y_i)\biggl(\frac{1}{1 - g(w^Tx)}\biggr)\biggr] \frac{\partial g(w^Tx)}{\partial w_j} = 
+	\end{equation*}
+
+	\begin{equation*}
+		 = - \biggl[\frac{y_i}{g(w^Tx)} - (1 - y_i)\biggl(\frac{1}{1 - g(w^Tx)}\biggr)\biggr] g(w^Tx) (1 - g(w^Tx)) \frac{\partial w^Tx}{\partial w_j} = 
+	\end{equation*}
+
+	\begin{equation*}
+		= - \bigl[y_i - y_i g(w^Tx) - g(w^Tx) + y_i g(w^Tx)\bigr] x_j = 
+	\end{equation*}
+
+	\begin{equation*}
+		= \bigl[h_w(x) - y_i\bigr] x_j
+	\end{equation*}
+
+	\begin{center}
+		Для случая из $m$ объектов получим:
+	\end{center}
+
+	\begin{equation}
+		\frac{\partial}{\partial w_j} L(w) = \frac{1}{m} \sum\limits_{i=1}^m \bigl[h_w(x_i) - y_i\bigr] x_{ij}
+	\end{equation}
+
+	Введем новые обозначения в терминах векторов и матриц.
+	
+	\vspace{0.3cm}
+	\begin{minipage}{0.5\textwidth}
+		\begin{flushleft}
+			$X \in \mathbb{R}^{m \times n} $ --- матрица объекты-признаки
+			$y \in \mathbb{R}^{m \times 1} $ --- вектор целевых переменных
+			$w \in \mathbb{R}^{1 \times n} $ --- вектор весов
+		\end{flushleft}
+	\end{minipage}
+
+	Используя эти обозначения введем матричное представление функции (4)
+	
+	\begin{equation*}
+		\nabla L(w) = \frac{1}{m} X^T \bigl[g(Xw) - y\bigr]
+	\end{equation*}
+
+	Добавим член регуляризации и получим формулу (5).
+	
+	\begin{equation}
+		\nabla L(w) = \frac{1}{m} X^T \bigl[g(Xw) - y\bigr] + \lambda w
+	\end{equation}
+	
+	Сам функционал логистической регрессии, формула (1), можно представить в такой матричной форме.
+	
+	\begin{equation}
+		L(w) = -\frac{1}{m} (1, 1, ... , 1) log\bigl(-(2y-1) \circ g(Xw)\bigr)  + \frac{\lambda}{2} \|w\|^2
+	\end{equation}
+\end{document}
