@@ -83,6 +83,29 @@ class LineSearchTool(object):
                 alpha_0 /= 2
 
             return alpha_0
+
+        elif self._method == 'Wolfe':
+            # phi_0 = oracle.func(x_k)
+            # phi_der_0 = oracle.grad_directional(x_k, d_k, 0)
+
+            phi_der = lambda alpha: oracle.grad_directional(x_k, d_k, alpha)
+            phi = lambda alpha: oracle.func_directional(x_k, d_k, alpha)
+
+            alpha_wolfe, _, _, _, _, _ = line_search(phi, phi_der, x_k, d_k, self.c1, self.c2)
+
+            # Если ряд сошелся, то возвращаем альфу ->
+            if alpha_wolfe:
+                return alpha_wolfe
+
+            # Если не сошелся, то запускаем бэктрекинг
+            alpha_0 = self.alpha_0 if not previous_alpha else previous_alpha
+            phi_0 = oracle.func(x_k)
+            phi_der_0 = oracle.grad_directional(x_k, d_k, 0)
+
+            while oracle.func_directional(x_k, d_k, alpha_0) > phi_0 + self.c1 * alpha_0 * phi_der_0:
+                alpha_0 /= 2
+
+            return alpha_0
         return None
 
 
