@@ -1,5 +1,6 @@
 import numpy as np
 
+from scipy.optimize import line_search  # сильные условия Вульфв
 
 class LineSearchTool(object):
     """
@@ -69,6 +70,19 @@ class LineSearchTool(object):
             Chosen step size
         """
         # TODO: Implement line search procedures for Armijo, Wolfe and Constant steps.
+
+        if self._method == 'Constant':
+            return self.c
+
+        elif self._method == 'Armijo':
+            alpha_0 = self.alpha_0 if not previous_alpha else previous_alpha
+            phi_0 = oracle.func(x_k) # аналогично >>> oracle.func_directional(x + alpha * d)
+            phi_der_0 = oracle.grad_directional(x_k, d_k, 0)
+
+            while oracle.func_directional(x_k, d_k, alpha_0) > phi_0 + self.c1 * alpha_0 * phi_der_0:
+                alpha_0 /= 2
+
+            return alpha_0
         return None
 
 
