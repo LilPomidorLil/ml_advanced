@@ -88,16 +88,26 @@ class LogRegL2Oracle(BaseSmoothOracle):
         self.matvec_Ax = matvec_Ax
         self.matvec_ATx = matvec_ATx
         self.matmat_ATsA = matmat_ATsA
-        self.b = b
+        self.b = b                                 # label
         self.regcoef = regcoef
 
-    def func(self, x):
-        # TODO: Implement
-        return None
+    def func(self, w):
+        """
+        Подсчет функционала ошибки
+        :param w: вектор весов
+        :return: значение функционала
+        """
+        m = len(self.b)
+        n = len(w)
+        in_log = - self.b * self.matvec_Ax(w)
+        loss = np.logaddexp(0, in_log)
+        return (np.ones(m) @ loss) / m + (self.regcoef / 2) * np.linalg.norm(w) ** 2
 
-    def grad(self, x):
-        # TODO: Implement
-        return None
+    def grad(self, w):
+        m = len(self.b)
+        sigmoid_and_label = scipy.special.expit(self.matvec_Ax(w)) - (self.b + 1)
+        res = self.matvec_ATx(sigmoid_and_label) / m
+        return res + self.regcoef * w
 
     def hess(self, x):
         # TODO: Implement
