@@ -3,7 +3,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
-
 def plot_levels(func, xrange=None, yrange=None, levels=None):
     """
     Plotting the contour lines of the function.
@@ -12,6 +11,8 @@ def plot_levels(func, xrange=None, yrange=None, levels=None):
     >> oracle = oracles.QuadraticOracle(np.array([[1.0, 2.0], [2.0, 5.0]]), np.zeros(2))
     >> plot_levels(oracle.func)
     """
+    fig, ax = plt.subplots(figsize=(4, 3))
+
     if xrange is None:
         xrange = [-6, 6]
     if yrange is None:
