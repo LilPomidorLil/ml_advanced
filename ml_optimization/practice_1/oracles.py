@@ -105,7 +105,7 @@ class LogRegL2Oracle(BaseSmoothOracle):
 
     def grad(self, w):
         m = len(self.b)
-        sigmoid_and_label = scipy.special.expit(self.matvec_Ax(w)) - (self.b + 1)
+        sigmoid_and_label = scipy.special.expit(self.matvec_Ax(w)) - (self.b + 1) / 2
         res = self.matvec_ATx(sigmoid_and_label) / m
         return res + self.regcoef * w
 

@@ -113,10 +113,11 @@ def get_line_search_tool(line_search_options=None):
     else:
         return LineSearchTool()
 
-def _update_history(history: defaultdict, time: float, func: np.ndarray, grad: np.ndarray, x: np.ndarray):
+def _update_history(history: defaultdict, time: float, func: np.ndarray, grad: np.ndarray, x):
     if x.shape[0] <= 2:
-        history['x'].append(x)
+        history['x'].append(np.copy(x))
 
     history['time'].append(time)
     history['func'].append(func)
     history['grad_norm'].append(np.linalg.norm(grad))
+    return history

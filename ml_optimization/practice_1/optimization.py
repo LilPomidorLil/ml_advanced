@@ -70,7 +70,7 @@ def gradient_descent(oracle, x_0, tolerance=1e-5, max_iter=10000,
 
     # Проверка условий корректности вычислений + критерий останова
     if trace:
-        _update_history(history, time_k, f_k, grad_k, x_k)
+        history = _update_history(history, time_k, f_k, grad_k, x_k)
     if (not np.all(np.isfinite(x_k))) & (not np.all(np.isfinite(grad_k))):
         return x_k, 'computational_error', history
     if (np.linalg.norm(grad_k) ** 2) <= tolerance * (np.linalg.norm(grad_0) ** 2):
@@ -95,11 +95,14 @@ def gradient_descent(oracle, x_0, tolerance=1e-5, max_iter=10000,
         time_k = time.time() - time_0
 
         if trace:
-            _update_history(history, time_k, f_k, grad_k, x_k)
+            history = _update_history(history, time_k, f_k, grad_k, x_k)
         if (not np.all(np.isfinite(x_k))) & (not np.all(np.isfinite(grad_k))):
             return x_k, 'computational_error', history
         if (np.linalg.norm(grad_k) ** 2) <= tolerance * (np.linalg.norm(grad_0) ** 2):
             return x_k, 'success', history
+
+    if (np.linalg.norm(grad_k) ** 2) > tolerance * (np.linalg.norm(grad_0) ** 2):
+        return x_k, 'iterations_exceeded', history
 
     return x_k, 'success', history
 
