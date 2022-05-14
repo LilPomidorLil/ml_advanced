@@ -190,4 +190,53 @@
 	\begin{equation}
 		L(w) = -\frac{1}{m} (1, 1, ... , 1) log\bigl(-(2y-1) \circ g(Xw)\bigr)  + \frac{\lambda}{2} \|w\|^2
 	\end{equation}
+
+	\newpage
+	\subsection{Гессиан}
+	
+	Выше мы получили функцию (4). Теперь снова продифференцируем ее, в предположении, что у нас один объект в выборке и нет регуляризации.
+	
+	\begin{equation}
+		\frac{\partial}{\partial w_j \partial w_j^T} L(w) = \frac{\partial}{\partial w_j^T} \bigl[g(w^Tx_i) - y_i\bigr] x_i =  x_i x_i^T g(w^Tx_i) (1 - g(w^Tx_i))
+	\end{equation}
+	
+	Для $m$ объектов и регуляризации формула(7) выглядит так:
+	
+	
+	\begin{equation}
+		\nabla^2 L(w) = \frac{1}{m} \sum\limits_{i=1}^m \biggl[x_i x_i^T g(w^Tx_i) (1 - g(w^Tx_i)) \biggr] - \lambda I
+	\end{equation}
+
+	Заметим, что матрицу $g(w^Tx_i) (1 - g(w^Tx_i))$ можно заменить диагональной матрицей, на главной диагонали которой, будут располагаться элементы $g(w^Tx_i) (1 - g(w^Tx_i))$. Назовем эту диагональную матрицу буквой $Z$.
+	
+	\vspace{0.5cm}
+	Таким образом, мы получаем матричную форму функции (8).
+	
+	\begin{equation}
+		\nabla^2 L(w) = \frac{1}{m} X^T Z X - \lambda I
+	\end{equation}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 \end{document}
