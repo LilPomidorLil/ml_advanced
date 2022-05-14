@@ -129,16 +129,13 @@ def create_log_reg_oracle(A, b, regcoef, oracle_type='usual'):
         `oracle_type` must be either 'usual' or 'optimized'
     """
     def matvec_Ax(x):
-        # TODO: Implement
-        return None
+        return A @ x
 
     def matvec_ATx(x):
-        # TODO: Implement
-        return None
+        return A.T @ x
 
     def matmat_ATsA(s):
-        # TODO: Implement
-        return None
+        return A.T @ scipy.sparse.diags(s) @ A
 
     if oracle_type == 'usual':
         oracle = LogRegL2Oracle
