@@ -11,7 +11,7 @@ def plot_levels(func, xrange=None, yrange=None, levels=None):
     >> oracle = oracles.QuadraticOracle(np.array([[1.0, 2.0], [2.0, 5.0]]), np.zeros(2))
     >> plot_levels(oracle.func)
     """
-    fig, ax = plt.subplots(figsize=(4, 3))
+    fig, ax = plt.subplots(figsize=(7, 6))
 
     if xrange is None:
         xrange = [-6, 6]
@@ -33,7 +33,7 @@ def plot_levels(func, xrange=None, yrange=None, levels=None):
     plt.grid()
 
 
-def plot_trajectory(func, history, fit_axis=False, label=None):
+def plot_trajectory(func, history, fit_axis=False, label=None, color = 'r'):
     """
     Plotting the trajectory of a method.
     Use after plot_levels(...).
@@ -46,7 +46,7 @@ def plot_trajectory(func, history, fit_axis=False, label=None):
     """
     x_values, y_values = zip(*history)
     plt.plot(x_values, y_values, '-v', linewidth=5.0, ms=12.0,
-             alpha=1.0, c='r', label=label)
+             alpha=1.0, c=color, label=label)
 
     # Tries to adapt axis-ranges for the trajectory:
     if fit_axis:
