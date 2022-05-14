@@ -87,7 +87,7 @@ def gradient_descent(oracle, x_0, tolerance=1e-5, max_iter=10000,
     # начинаем итерироваться
     for i in range(max_iter):
         alpha_k = line_search_tool.line_search(oracle, x_k, -grad_k, alpha_k)
-        x_k -= alpha_k * grad_k
+        x_k = x_k - alpha_k * grad_k
 
         # снова вызов оракула
         f_k = oracle.func(x_k)
