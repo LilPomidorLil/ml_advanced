@@ -3,8 +3,8 @@ from collections import defaultdict, deque  # Use this for effective implementat
 
 import numpy as np
 
-from utils import get_line_search_tool
-from utils import _update_history
+from .utils import get_line_search_tool
+from .utils import _update_history
 
 
 def gradient_descent(oracle, x_0, tolerance=1e-5, max_iter=10000,
