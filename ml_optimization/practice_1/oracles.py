@@ -109,9 +109,13 @@ class LogRegL2Oracle(BaseSmoothOracle):
         res = self.matvec_ATx(sigmoid_and_label) / m
         return res + self.regcoef * w
 
-    def hess(self, x):
-        # TODO: Implement
-        return None
+    def hess(self, w):
+        m = len(self.b)
+        n = len(w)
+        sigmoid_arg = self.matvec_Ax(w)
+        sigmoid_der = scipy.special.expit(sigmoid_arg) * (1 - scipy.special.expit(sigmoid_arg))
+        res = self.matmat_ATsA(sigmoid_der)
+        return res / m + self.regcoef * np.eye(n)
 
 
 class LogRegL2OptimizedOracle(LogRegL2Oracle):
