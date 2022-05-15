@@ -169,7 +169,15 @@ def grad_finite_diff(func, x, eps=1e-8):
                           >> i <<
     """
     # TODO: Implement numerical estimation of the gradient
-    return None
+    n = len(x)
+
+    res = np.zeros(n)
+
+    for i in range(n):
+        e = np.zeros(n)
+        e[i] = 1
+        res += (func.func(x + eps * e) - func.func(x)) / eps
+    return res
 
 
 def hess_finite_diff(func, x, eps=1e-5):
