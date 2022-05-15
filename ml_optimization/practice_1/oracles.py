@@ -191,5 +191,14 @@ def hess_finite_diff(func, x, eps=1e-5):
         e_i = (0, 0, ..., 0, 1, 0, ..., 0)
                           >> i <<
     """
-    # TODO: Implement numerical estimation of the Hessian
-    return None
+    n = len(x)
+    res = np.zeros(n, n)
+
+    for i in range(n):
+        ei = np.zeros(n)
+        ei[i] = 1
+        for j in range(n):
+            ej = np.zeros(n)
+            ej[j] = 1
+            res += (func.func(x + eps * ei + eps * ej) - func.func(x + eps * ei) - func.func(x + eps * ej) + func.func(x)) / eps^2
+    return res
