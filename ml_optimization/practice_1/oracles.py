@@ -176,7 +176,7 @@ def grad_finite_diff(func, x, eps=1e-8):
     for i in range(n):
         e = np.zeros(n)
         e[i] = 1
-        res += (func.func(x + eps * e) - func.func(x)) / eps
+        res[i] = (func(x + eps * e) - func(x)) / eps
     return res
 
 
@@ -192,7 +192,7 @@ def hess_finite_diff(func, x, eps=1e-5):
                           >> i <<
     """
     n = len(x)
-    res = np.zeros(n, n)
+    res = np.zeros((n, n))
 
     for i in range(n):
         ei = np.zeros(n)
@@ -200,5 +200,5 @@ def hess_finite_diff(func, x, eps=1e-5):
         for j in range(n):
             ej = np.zeros(n)
             ej[j] = 1
-            res += (func.func(x + eps * ei + eps * ej) - func.func(x + eps * ei) - func.func(x + eps * ej) + func.func(x)) / eps^2
+            res[i][j] = (func(x + eps * ei + eps * ej) - func(x + eps * ei) - func(x + eps * ej) + func(x)) / eps**2
     return res
