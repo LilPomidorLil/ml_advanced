@@ -215,25 +215,45 @@
 	\begin{equation}
 		\nabla^2 L(w) = \frac{1}{m} X^T Z X - \lambda I
 	\end{equation}
-
-	\newpage
 	
+	\vspace{2cm}
+	
+	\section{Эксперименты}
+	
+	В этой главе мы приступим к оценке реализованных алгоритмов градиентного спуска. Начнем с анализа вариантов линейного поиска шага и закончим логистической регрессией. 
+	
+	\subsection{Траектория градиентного спуска на квадратичной функции}
+	
+	Начнем с {\it двумерной} квадратичной функции $f(x) = \frac{1}{2} \langle Xw, w \rangle  - \langle y, w \rangle $, где $X \in \mathbb{S}_{++}^n$, $b \in \mathbb{R}^n$. Придумаем 4 функции, поведения спуска на которых, будет отличаться.
+	
+	\vspace{0.5cm}
+	{\bf Обусловленность функции.} Проанализируем график обусловленности матрицы ниже.
+
+	\begin{figure}[H]
+		\centering
+		\subcaptionbox{$X =  \left( \begin{smallmatrix} 1 & 0\\ 0 & 50 \end{smallmatrix}  \right)$, $w_0 = (10.0, 4.0)$}{\includegraphics[width=0.5\textwidth]{img/3.1/fig_1}}%
+		\hfill % <-- Seperation
+		\subcaptionbox{$X =  \left( \begin{smallmatrix} 1 & 0\\ 0 & 5 \end{smallmatrix}  \right)$, $w_0 = (10.0, 4.0)$}{\includegraphics[width=0.5\textwidth]{img/3.1/fig_2}}%
+		\caption{Обусловленность матрицы}
+		\label{fig:obyslovlenn}
+	\end{figure}
+	
+	\newpage
+	Можно заметить, что, чем ниже обусловленность матрицы, тем больше итераций делает спуск с постоянной длиной шага, а спуску методом Армихо, наоборот, требуется в 3 раза меньше операций.
+	Также траектория спуска с постоянным шагом стала более плавной, на Рис.\ref{fig:obyslovlenn} (a), мы видим, как направление спуска резко сменилось на $90^{\circ}$, а на том же рисунке с литерой (b), траектория меняется более плавно. Траектория Армихо в среднем не изменилась, также видны резкие изменения траектории, но ближе к точке минимума траектория становится более плавной и совпадает со спуском с постоянным шагом. Траектория Вульфа стала более криволинейной, каждый шаг делается практически с разворотом на $90^{\circ}$, но благодаря подбору шага этому методу требуется меньше итераций, чем двум другим.
+	
+	\vspace{1cm}
 	
 	\begin{figure}[H]
 		\centering
-		\subcaptionbox{Subcaption A}{\includegraphics[width=0.45\textwidth]{fig_1}}%
+		\subcaptionbox{$X =  \left( \begin{smallmatrix} 0.5 & 0\\ 0 & -0.5 \end{smallmatrix}  \right)$, $w_0 = (3.0, -3.0)$}{\includegraphics[width=0.5\textwidth]{img/3.1/fig_3}}%
 		\hfill % <-- Seperation
-		\subcaptionbox{Subcaption B}{\includegraphics[width=0.45\textwidth]{fig_1}}%
-		\\ % <-- Line break
-		\subcaptionbox{Subcaption C}{\includegraphics[width=0.45\textwidth]{fig_1}}%
-		\hfill % <-- Seperation
-		\subcaptionbox{Subcaption D}{\includegraphics[width=0.45\textwidth]{fig_1}}%
-		\caption{Caption}
+		\subcaptionbox{$X =  \left( \begin{smallmatrix} 0.5 & 0\\ 0 & -0.5 \end{smallmatrix}  \right)$, $w_0 = (1.0, 0.0)$}{\includegraphics[width=0.5\textwidth]{img/3.1/fig_4}}%
+		\caption{Выбор начальной точки}
+		\label{fig:start_point}
 	\end{figure}
 	
-	
-	
-	
+	На Рис.\ref{fig:start_point} ищется локальный минимум функции $f(x) = \frac{1}{2}x^2 - \frac{1}{2}y^2$ --- так называемая, седловая функция. Ее особенность заключается в том, что найти ее минимум можно тогда и только тогда, когда начинаем с точки $w_{init} = (1.0, 0.0)$, это можно легко доказать теоретически. Также заметим, что на Рис.\ref{fig:start_point} (a) константный метод дошел до предела итераций, но так и не достиг $-\infty$ по значению функции. Армихо и Вульф достигли этого нижнего предела, сработал критерий останова, причем метод Вульфа снова обогнал другие методы спуска. На Рис. \ref{fig:start_point} (b) все 3 метода сходятся в одну точку, но спуску с постоянным шагом требуется куда больше итераций для этого.
 	
 	
 	
