@@ -4,9 +4,9 @@ from collections import defaultdict, deque  # Use this for effective implementat
 import numpy as np
 from numpy.linalg import LinAlgError
 
-from utils import get_line_search_tool
-from utils import _update_history
-from utils import _newton_direction
+from .utils import get_line_search_tool
+from .utils import _update_history
+from .utils import _newton_direction
 
 
 def gradient_descent(oracle, x_0, tolerance=1e-5, max_iter=10000,
@@ -66,9 +66,6 @@ def gradient_descent(oracle, x_0, tolerance=1e-5, max_iter=10000,
     grad_0 = oracle.grad(x_0)
     time_k = time.time() - time_0
 
-    # Отладочная информация
-    if display:
-        print("Oracles init successful!")
 
     # Проверка условий корректности вычислений + критерий останова
     if trace:
@@ -85,7 +82,7 @@ def gradient_descent(oracle, x_0, tolerance=1e-5, max_iter=10000,
         alpha_k = 1.0
 
     if display:
-        print("Start iteration")
+        print("Gradient Descent start")
     # начинаем итерироваться
     for i in range(max_iter):
         alpha_k = line_search_tool.line_search(oracle, x_k, -grad_k, alpha_k)
@@ -161,7 +158,6 @@ def newton(oracle, x_0, tolerance=1e-5, max_iter=100,
     line_search_tool = get_line_search_tool(line_search_options)
     x_k = np.copy(x_0)
 
-    # TODO: Implement Newton's method.
     # Use line_search_tool.line_search() for adaptive step size.
 
     f_k = oracle.func(x_k)
@@ -170,9 +166,6 @@ def newton(oracle, x_0, tolerance=1e-5, max_iter=100,
     grad_k = oracle.grad(x_k)
     hess_k = oracle.hess(x_k)
     time_k = time.time() - time_0
-
-    if display:
-        print("First oracle well done")
 
     if trace:
         history = _update_history(history, time_k, f_k, grad_k, x_k)
@@ -183,6 +176,9 @@ def newton(oracle, x_0, tolerance=1e-5, max_iter=100,
 
     # learning rate in newton method must be 1 in first iteration.
     alpha_0 = 1.0
+
+    if display:
+        print("Newton run")
 
     # try to calculate the first direction
     try:
