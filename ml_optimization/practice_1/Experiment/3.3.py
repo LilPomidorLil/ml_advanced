@@ -34,7 +34,7 @@ def plot_grad_nwtn_graph(grad_acc: List[float], nwtn_acc: List[float], eps_list:
     plt.ylabel("Accuracy")
     plt.legend()
     plt.grid()
-    plt.savefig('../Report/img/3.3/{}.png'.format(filename), format='png')
+    plt.savefig('../Report/img/3.3/{}.eps'.format(filename.replace('.txt', '')), format='eps')
 
 def plot(filename: str, method_name: str, eps_list: List[float]):
     try:
@@ -74,7 +74,14 @@ def plot(filename: str, method_name: str, eps_list: List[float]):
 
     plot_grad_nwtn_graph(acc_grad_list, acc_nwtn_list, eps_list, filename)
 
-    print(SEPARETED_TEXT, SUCCESS_WORD, SEPARETED_TEXT, sep = '\n')
+
+    print(SEPARETED_TEXT, SUCCESS_WORD, SEPARETED_TEXT, sep = '\n', end = '\n\n\n')
 
 if __name__ == '__main__':
-    plot("w8a.txt", 'Armijo', [1, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8])
+    eps = [1, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8]
+    plot("heart.txt", 'Wolfe', eps)
+    plot("heart_scale.txt", 'Wolfe', eps)
+    plot("diabetes.txt", 'Wolfe', eps)
+    plot("diabetes_scale.txt", 'Wolfe', eps)
+    plot("breast-cancer.txt", 'Wolfe', eps)
+    plot("breast-cancer.txt", 'Wolfe', eps)
