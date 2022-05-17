@@ -3,6 +3,8 @@ from typing import List
 
 import numpy as np
 from scipy.optimize import line_search  # сильные условия Вульфа
+from scipy.linalg import cho_factor     # разложение Холецкого
+from scipy.linalg import cho_solve      # решение СЛАУ с учетом разложения Холецкого
 
 class LineSearchTool(object):
     """
@@ -76,7 +78,7 @@ class LineSearchTool(object):
 
         elif self._method == 'Armijo':
             alpha_0 = self.alpha_0 if not previous_alpha else previous_alpha
-            phi_0 = oracle.func(x_k) # аналогично >>> oracle.func_directional(x + alpha * d)
+            phi_0 = oracle.func(x_k) # аналогично >>> oracle.func_directional(x + alpha * d), при alpha == 0
             phi_der_0 = oracle.grad_directional(x_k, d_k, 0)
 
             while oracle.func_directional(x_k, d_k, alpha_0) > phi_0 + self.c1 * alpha_0 * phi_der_0:
@@ -121,3 +123,8 @@ def _update_history(history: defaultdict, time: float, func: np.ndarray, grad: n
     history['func'].append(func)
     history['grad_norm'].append(np.linalg.norm(grad))
     return history
+
+def _newton_direction(hess, grad):
+    hess_cho, lower = cho_factor(hess, overwrite_a=False, check_finite=True)
+    dk = cho_solve((hess_cho, lower), -grad)
+    return dk
