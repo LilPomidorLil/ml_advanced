@@ -4,9 +4,9 @@ from collections import defaultdict, deque  # Use this for effective implementat
 import numpy as np
 from numpy.linalg import LinAlgError
 
-from .utils import get_line_search_tool
-from .utils import _update_history
-from .utils import _newton_direction
+from utils import get_line_search_tool
+from utils import _update_history
+from utils import _newton_direction
 
 
 def gradient_descent(oracle, x_0, tolerance=1e-5, max_iter=10000,
@@ -188,7 +188,7 @@ def newton(oracle, x_0, tolerance=1e-5, max_iter=100,
     try:
         d_k = _newton_direction(hess_k, grad_k)
     except LinAlgError:
-        return x_k, 'newton_direction_error', history
+        return x_k, 'computational_error', history
 
 
     # run iteration
@@ -211,7 +211,7 @@ def newton(oracle, x_0, tolerance=1e-5, max_iter=100,
         try:
             d_k = _newton_direction(hess_k, grad_k)
         except LinAlgError:
-            return x_k, 'newton_direction_error', history
+            return x_k, 'computational_error', history
 
     if (np.linalg.norm(grad_k) ** 2) > tolerance * (np.linalg.norm(grad_0) ** 2):
         return x_k, 'iterations_exceeded', history
