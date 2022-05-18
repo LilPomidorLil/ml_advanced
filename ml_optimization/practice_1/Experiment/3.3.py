@@ -32,7 +32,7 @@ def plot_nwtn_graph(nwtn_acc: List[float], nwtn_recall: List[float], nwtn_precis
     plt.plot(eps_list, nwtn_precision, color = 'blue', linewidth = 2, label = "- precision")
     plt.plot(eps_list, nwtn_f1, color='orange', linewidth=2, label="- f1-score")
     plt.xlabel("Epsilon")
-    plt.ylabel("Accuracy")
+    plt.ylabel("Metrics Percentage Value")
     plt.legend()
     plt.grid()
     plt.savefig('../Report/img/3.3/{}.eps'.format(filename.replace('.txt', '')), format='eps')
