@@ -7,7 +7,6 @@ from ml_optimization.practice_1 import oracles
 from sklearn.datasets import load_svmlight_file
 from sklearn.model_selection import train_test_split
 
-from typing import List
 from collections import defaultdict
 
 def plot_func_vs_iteration(data_title: str, history_grad: defaultdict, history_nwtn: defaultdict):
@@ -73,7 +72,7 @@ def main(filename: str):
                                                line_search_options={"method": "Wolfe"},
                                                trace=True)
 
-    filename = filename.replace(".txt", "").replace(".bz2", "")
+    filename = filename.replace(".txt", "").replace(".bz2", "").replace(".binary", "")
 
     plot_func_vs_iteration(filename, history_grad, history_nwtn)
     plot_func_vs_time(filename, history_grad, history_nwtn)
@@ -81,4 +80,4 @@ def main(filename: str):
 
 
 if __name__ == '__main__':
-    main("w8a.txt")
+    main("gisette_scale.bz2")
