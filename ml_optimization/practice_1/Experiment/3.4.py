@@ -39,12 +39,12 @@ def plot_relative_square_gradient(data_title: str, history_grad: defaultdict, hi
     grad_norm_k = np.array(history_grad['grad_norm']) ** 2
     grad_norm_0 = np.linalg.norm(oracle.grad(x_0)) ** 2
     grad_relative_norm = np.log(grad_norm_k / grad_norm_0 + 1e-8)
-    plt.plot(grad_relative_norm, history_grad['func'], color = 'black', linewidth = 3, label = "Gradient Descent")
+    plt.plot(history_grad['time'], grad_relative_norm,color = 'black', linewidth = 3, label = "Gradient Descent")
 
     nwtn_norm_k = np.array(histort_nwtn['grad_norm']) ** 2
     nwtn_norm_0 = np.linalg.norm(oracle.grad(x_0)) ** 2
     nwtn_relative_norm = np.log(nwtn_norm_k / nwtn_norm_0 + 1e-8)
-    plt.plot(nwtn_relative_norm, histort_nwtn['func'], color='red', linewidth=3, label="Newton Method")
+    plt.plot(histort_nwtn['time'], nwtn_relative_norm, color='red', linewidth=3, label="Newton Method")
 
     plt.xlabel("Time from start")
     plt.ylabel("Log Relative Square Norm")
