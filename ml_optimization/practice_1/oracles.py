@@ -98,7 +98,6 @@ class LogRegL2Oracle(BaseSmoothOracle):
         :return: значение функционала
         """
         m = len(self.b)
-        n = len(w)
         in_log = - self.b * self.matvec_Ax(w)
         loss = np.logaddexp(0, in_log)
         return (np.ones(m) @ loss) / m + (self.regcoef / 2) * np.linalg.norm(w) ** 2
@@ -127,6 +126,77 @@ class LogRegL2OptimizedOracle(LogRegL2Oracle):
 
     def __init__(self, matvec_Ax, matvec_ATx, matmat_ATsA, b, regcoef):
         super().__init__(matvec_Ax, matvec_ATx, matmat_ATsA, b, regcoef)
+        self.x = None
+        self.d = None
+        self.xhat = None                # x_hat = x + alpha * d
+        self.A_xhat = None              # A_xhat = Ax + alpha * Ad
+        self.Ad = None
+        self.Ax = None
+        self.ATx = None
+
+
+    def update_Ax(self, x):
+        if np.all(x == self.x):
+            return
+
+        self.x = x
+        self.Ax = self.matvec_Ax(x)
+
+    def update_Ad(self, d):
+        if np.all(d == self.d):
+            return
+
+        self.d = d
+        self.Ad = self.matvec_Ax(d)
+
+    def update_xhat(self, x, alpha, d):
+        if np.all(self.xhat == x + alpha * d):
+            return
+
+        self.xhat = x + alpha * d
+        self.A_xhat = self.Ax + alpha * self.Ad
+
+    def func(self, x):
+        m = len(self.b)
+
+        # last point in task
+        if np.all(self.xhat == x):
+            in_log = - self.b * self.A_xhat
+            loss = np.logaddexp(0, in_log)
+            return (np.ones(m) @ loss) / m + (self.regcoef / 2) * np.linalg.norm(x) ** 2
+
+        self.update_Ax(x)
+        in_log = - self.b * self.Ax
+        loss = np.logaddexp(0, in_log)
+        return (np.ones(m) @ loss) / m + (self.regcoef / 2) * np.linalg.norm(x) ** 2
+
+    def grad(self, x):
+        m = len(self.b)
+
+        if np.all(self.xhat == x):
+            sigmoid_and_label = scipy.special.expit(self.A_xhat) - (self.b + 1) / 2
+            res = self.matvec_ATx(sigmoid_and_label) / m
+            return res + self.regcoef * x
+
+        self.update_Ax(x)
+        sigmoid_and_label = scipy.special.expit(self.Ax) - (self.b + 1) / 2
+        res = self.matvec_ATx(sigmoid_and_label) / m
+        return res + self.regcoef * x
+
+    def hess(self, x):
+        m = len(self.b)
+        n = len(x)
+
+        if np.all(self.xhat == x):
+            sigmoid_der = scipy.special.expit(self.A_xhat) * (1 - scipy.special.expit(self.A_xhat))
+            res = self.matmat_ATsA(sigmoid_der)
+            return res / m + self.regcoef * np.eye(n)
+
+        self.update_Ax(x)
+        sigmoid_der = scipy.special.expit(self.Ax) * (1 - scipy.special.expit(self.Ax))
+        res = self.matmat_ATsA(sigmoid_der)
+        return res / m + self.regcoef * np.eye(n)
+
 
     def func_directional(self, x, d, alpha):
         # TODO: Implement optimized version with pre-computation of Ax and Ad
