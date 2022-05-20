@@ -38,7 +38,7 @@ def plot_func_vs_time(history_usual: defaultdict, history_opt: defaultdict):
     plt.close()
 
 def plot_relative_square_gradient(history_usual: defaultdict, history_opt: defaultdict):
-    plt.title("Relative Square Gradient Norm")
+    plt.title("Log Relative Square Gradient Norm")
     norm_grad_0 = history_usual['grad_norm'][0] ** 2
     opt_grad_0 = history_opt['grad_norm'][0] ** 2
     norm_relative_square_gradient = np.log(np.array(history_usual['grad_norm']) ** 2 / norm_grad_0)
