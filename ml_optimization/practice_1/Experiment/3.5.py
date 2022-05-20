@@ -17,8 +17,8 @@ def plot_func_vs_iter(history_usual: defaultdict, history_opt: defaultdict):
     num_iter_opt = len(history_opt['func'])
 
     plt.title("Function VS Iteration")
-    plt.plot(np.arange(0, num_iter_usual), history_usual['func'], color = 'red', linewidth = 4, label = "Usual LogReg Oracle")
-    plt.plot(np.arange(0, num_iter_opt), history_opt['func'], color = 'orange', linewidth = 3, label = "Optimized LogReg Oracle")
+    plt.plot(np.arange(0, num_iter_usual), history_usual['func'], color = 'red', linewidth = 4, label = "Usual")
+    plt.plot(np.arange(0, num_iter_opt), history_opt['func'], color = 'orange', linewidth = 3, label = "Optimized")
     plt.xlabel("Iteration number")
     plt.ylabel("f(w)")
     plt.grid()
@@ -28,8 +28,8 @@ def plot_func_vs_iter(history_usual: defaultdict, history_opt: defaultdict):
 
 def plot_func_vs_time(history_usual: defaultdict, history_opt: defaultdict):
     plt.title("Function VS Time")
-    plt.plot(history_usual['time'], history_usual['func'], color = 'red', linewidth = 3, label = "Usual LogReg Oracle")
-    plt.plot(history_opt['time'], history_opt['func'], color='orange', linewidth=3, label="Optimized LogReg Oracle")
+    plt.plot(history_usual['time'], history_usual['func'], color = 'red', linewidth = 3, label = "Usual")
+    plt.plot(history_opt['time'], history_opt['func'], color='orange', linewidth=3, label="Optimized")
     plt.xlabel("Time[sec]")
     plt.ylabel("f(w)")
     plt.grid()
@@ -44,8 +44,8 @@ def plot_relative_square_gradient(history_usual: defaultdict, history_opt: defau
     norm_relative_square_gradient = np.log(np.array(history_usual['grad_norm']) ** 2 / norm_grad_0)
     opt_relative_square_gradient = np.log(np.array(history_opt['grad_norm']) ** 2 / opt_grad_0)
 
-    plt.plot(history_usual['time'], norm_relative_square_gradient, color = 'red', linewidth = 3, label = "Usual LogReg Oracle")
-    plt.plot(history_opt['time'], opt_relative_square_gradient, color='orange', linewidth=3, label="Optimized LogReg Oracle")
+    plt.plot(history_usual['time'], norm_relative_square_gradient, color = 'red', linewidth = 3, label = "Usual")
+    plt.plot(history_opt['time'], opt_relative_square_gradient, color='orange', linewidth=3, label="Optimized")
     plt.xlabel("Time[sec]")
     plt.ylabel("Log Relative Square Norm")
     plt.grid()
@@ -63,17 +63,16 @@ def main(m: int = 10000, n: int = 8000):
     [_, _, history_usual] = optimization.gradient_descent(
         oracle_usual,
         x_0,
-        line_search_options={"method": "Wolfe"},
+        line_search_options={"method": "Wolfe", "c": 1},
         trace = True
     )
 
     [_, _, history_opt] = optimization.gradient_descent(
         oracle_opt,
         x_0,
-        line_search_options={"method": "Wolfe"},
+        line_search_options={"method": "Wolfe", "c": 1},
         trace = True
     )
-
     plot_func_vs_iter(history_usual, history_opt)
     plot_func_vs_time(history_usual, history_opt)
     plot_relative_square_gradient(history_usual, history_opt)
