@@ -200,11 +200,26 @@ class LogRegL2OptimizedOracle(LogRegL2Oracle):
 
     def func_directional(self, x, d, alpha):
         # TODO: Implement optimized version with pre-computation of Ax and Ad
-        return None
+        m = len(self.b)
+
+        self.update_Ad(d)
+        self.update_Ax(x)
+        self.update_xhat(x, alpha, d)
+
+        in_log = - self.b * self.A_xhat
+        loss = np.logaddexp(0, in_log)
+        return np.squeeze((np.ones(m) @ loss) / m + (self.regcoef / 2) * np.linalg.norm(self.xhat) ** 2)
 
     def grad_directional(self, x, d, alpha):
         # TODO: Implement optimized version with pre-computation of Ax and Ad
-        return None
+        m = len(self.b)
+
+        self.update_Ad(d)
+        self.update_Ax(x)
+        self.update_xhat(x, alpha, d)
+
+        sigmoid_and_label = scipy.special.expit(self.A_xhat) - (self.b + 1) / 2
+        return (np.transpose(sigmoid_and_label) @ self.Ad / m) + self.regcoef * self.A_xhat @ d
 
 
 def create_log_reg_oracle(A, b, regcoef, oracle_type='usual'):
